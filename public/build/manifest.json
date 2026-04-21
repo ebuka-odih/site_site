@@ -1,0 +1,69 @@
+{
+  "_SiteChrome-CemE7y1E.js": {
+    "file": "assets/SiteChrome-CemE7y1E.js",
+    "name": "SiteChrome",
+    "imports": [
+      "resources/js/app.tsx",
+      "_createLucideIcon-CELJ0_DJ.js"
+    ]
+  },
+  "_createLucideIcon-CELJ0_DJ.js": {
+    "file": "assets/createLucideIcon-CELJ0_DJ.js",
+    "name": "createLucideIcon",
+    "imports": [
+      "resources/js/app.tsx"
+    ]
+  },
+  "resources/css/app.css": {
+    "file": "assets/app-DEH08kzV.css",
+    "src": "resources/css/app.css",
+    "isEntry": true,
+    "name": "app",
+    "names": [
+      "app.css"
+    ]
+  },
+  "resources/js/Pages/Company.tsx": {
+    "file": "assets/Company-DO9rBTk4.js",
+    "name": "Company",
+    "src": "resources/js/Pages/Company.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_SiteChrome-CemE7y1E.js",
+      "_createLucideIcon-CELJ0_DJ.js"
+    ]
+  },
+  "resources/js/Pages/Home.tsx": {
+    "file": "assets/Home-C5BfmKY-.js",
+    "name": "Home",
+    "src": "resources/js/Pages/Home.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_SiteChrome-CemE7y1E.js",
+      "_createLucideIcon-CELJ0_DJ.js"
+    ]
+  },
+  "resources/js/Pages/Portal.tsx": {
+    "file": "assets/Portal-DSSoKNLK.js",
+    "name": "Portal",
+    "src": "resources/js/Pages/Portal.tsx",
+    "isDynamicEntry": true,
+    "imports": [
+      "resources/js/app.tsx",
+      "_createLucideIcon-CELJ0_DJ.js"
+    ]
+  },
+  "resources/js/app.tsx": {
+    "file": "assets/app-jjsZybwy.js",
+    "name": "app",
+    "src": "resources/js/app.tsx",
+    "isEntry": true,
+    "dynamicImports": [
+      "resources/js/Pages/Company.tsx",
+      "resources/js/Pages/Home.tsx",
+      "resources/js/Pages/Portal.tsx"
+    ]
+  }
+}
