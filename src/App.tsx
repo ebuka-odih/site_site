@@ -70,7 +70,7 @@ export default function NorthshoreUnlimitedP2PPage() {
     <div className="min-h-screen bg-elegant-bg font-sans selection:bg-gold selection:text-black">
       {/* Navigation - Elegant Higher Header */}
       <header className="fixed top-0 left-0 right-0 z-50 h-20 border-b border-elegant-border bg-elegant-bg/95 backdrop-blur-md">
-        <div className="mx-auto h-full flex max-w-7xl items-center justify-between px-12">
+        <div className="mx-auto h-full flex max-w-7xl items-center justify-between px-6 md:px-12">
           <motion.div 
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
@@ -127,7 +127,7 @@ export default function NorthshoreUnlimitedP2PPage() {
         </AnimatePresence>
       </header>
 
-      <main className="pt-32 mx-auto max-w-7xl min-h-[calc(100vh-60px)] px-12">
+      <main className="pt-24 md:pt-32 mx-auto max-w-7xl min-h-[calc(100vh-60px)] px-6 md:px-12">
         {/* Hero Section - Elegant Split Side */}
         <section className="py-12 lg:py-20">
           <div className="grid gap-16 lg:grid-cols-[1.2fr_1fr] lg:items-center">
@@ -179,9 +179,9 @@ export default function NorthshoreUnlimitedP2PPage() {
               initial={{ opacity: 0, y: 30 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8 }}
-              className="bento-grid grid grid-cols-2 gap-4"
+              className="bento-grid grid grid-cols-1 sm:grid-cols-2 gap-4"
             >
-              <div className="flex flex-col justify-between rounded-xl border border-elegant-border bg-elegant-card p-8 col-span-2">
+              <div className="flex flex-col justify-between rounded-xl border border-elegant-border bg-elegant-card p-8 sm:col-span-2">
                 <div>
                   <span className="text-[10px] uppercase tracking-[0.2em] text-white/30 mb-4 block">Active Operations</span>
                   <div className="font-sans text-xl font-medium mb-2">Private P2P Settlement</div>
@@ -345,10 +345,9 @@ export default function NorthshoreUnlimitedP2PPage() {
         </section>
       </main>
 
-      {/* Elegant Short Footer */}
-      <footer className="mx-auto max-w-7xl h-[80px] border-t border-elegant-border flex items-center justify-between px-12 text-[10px] uppercase tracking-[0.2em] text-white/20">
-        <div>&copy; 2026 NORTHSHORE UNLIMITED PARTNERS.</div>
-        <div className="hidden md:block">PRIVATE ACCESS ONLY • JURISDICTIONAL RESTRICTIONS APPLY</div>
+      <footer className="mx-auto max-w-7xl h-auto md:h-[80px] border-t border-elegant-border flex flex-col md:flex-row items-center justify-between px-6 md:px-12 py-8 md:py-0 gap-4 text-[10px] uppercase tracking-[0.2em] text-white/20">
+        <div className="text-center md:text-left">&copy; 2026 NORTHSHORE UNLIMITED PARTNERS.</div>
+        <div className="text-center md:block">PRIVATE ACCESS ONLY • JURISDICTIONAL RESTRICTIONS APPLY</div>
       </footer>
     </div>
   );
