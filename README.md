@@ -1,20 +1,18 @@
-<div align="center">
-<img width="1200" height="475" alt="GHBanner" src="https://github.com/user-attachments/assets/0aa67016-6eaf-458a-adb2-6e31a0763ed6" />
-</div>
+# Northshore Unlimited
 
-# Run and deploy your AI Studio app
+Laravel 12 + Inertia + React migration of the existing front pages.
 
-This contains everything you need to run your app locally.
+## What changed
 
-View your app in AI Studio: https://ai.studio/apps/ff980198-2a22-4033-9135-b6fb23c8fdcf
+- The original React front pages now render through Inertia.
+- The home page form posts to Laravel at `POST /trade-request`.
+- Requests are stored in the `trade_requests` table.
 
-## Run Locally
+## Local development
 
-**Prerequisites:**  Node.js
+1. Install PHP dependencies: `composer install`
+2. Install Node dependencies: `npm install`
+3. Run the app: `php artisan serve`
+4. Run Vite: `npm run dev:vite`
 
-
-1. Install dependencies:
-   `npm install`
-2. Set the `GEMINI_API_KEY` in [.env.local](.env.local) to your Gemini API key
-3. Run the app:
-   `npm run dev`
+If you want both processes together, use `npm run dev`.
