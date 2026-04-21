@@ -2,9 +2,11 @@
 
 namespace App\Http\Controllers;
 
+use App\Mail\TradeRequestReceived;
 use App\Models\TradeRequest;
 use Illuminate\Http\Request;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Mail;
 
 class TradeRequestController extends Controller
 {
@@ -29,6 +31,8 @@ class TradeRequestController extends Controller
             'ip_address' => $request->ip(),
             'user_agent' => $request->userAgent(),
         ]);
+
+        Mail::to('trade@northshoreunlimited.com')->send(new TradeRequestReceived($validated));
 
         return back()->with('success', 'Request transmitted. Our desk operations will process your inquiry shortly.');
     }
