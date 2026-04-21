@@ -298,6 +298,55 @@ function CompanyPage() {
              </div>
              <div className="absolute top-0 right-0 h-full w-1/3 bg-gradient-to-l from-gold/5 to-transparent pointer-events-none" />
           </div>
+
+          <div className="mt-12 grid gap-8 md:grid-cols-2">
+            <div className="rounded-2xl border border-elegant-border bg-elegant-card p-10 group transition-colors hover:border-gold/20">
+               <h3 className="text-xl font-serif italic text-white mb-6">Full-reserve exchange and qualified custodian</h3>
+               <p className="text-sm leading-relaxed text-white/50">
+                At Northshore Unlimited, trust and security are our top priorities. Northshore Unlimited Trust Company (NSTC) is a full-reserve exchange and qualified custodian under the New York Banking Law and is licensed by the New York State Department of Financial Services. Northshore Unlimited, LLC utilizes the eOTC settlement and wallet infrastructure, which is managed by NSTC, which is SOC-2 Type II compliant.
+               </p>
+            </div>
+            <div className="rounded-2xl border border-elegant-border bg-elegant-card p-10 group transition-colors hover:border-gold/20">
+               <h3 className="text-xl font-serif italic text-white mb-6">Our Commitment to Compliance</h3>
+               <p className="text-sm leading-relaxed text-white/50">
+                A strong compliance foundation is critical to Northshore Unlimited mission of being the most trusted crypto platform. To this end, we have developed a Compliance Program that is rooted in best practices from traditional financial services as well as innovative, sophisticated compliance technology to bring the Bitcoin industry forward. We hold a high standard for what assets we list, what services we provide, and who has access to our products.
+               </p>
+            </div>
+          </div>
+
+          <div className="mt-24 border-t border-elegant-border py-24">
+            <div className="max-w-3xl">
+              <h3 className="font-serif italic text-3xl text-white mb-8">Advancing Economic Freedom</h3>
+              <div className="space-y-6 text-lg text-white/60 leading-relaxed">
+                <p>
+                  Bitcoin creates economic freedom by ensuring that people can participate fairly in the economy, and Northshore Unlimited is on a mission to increase economic freedom for more than 1 billion people.
+                </p>
+                <p>
+                  We’re updating the century-old financial system by providing a trusted platform that makes it easy for people and institutions to engage with Bitcoin assets, including trading, staking, safekeeping, spending, and fast, free global transfers.
+                </p>
+                <p>
+                  We also provide critical infrastructure for onchain activity and support builders who share our vision that onchain is the new online. And together with the Bitcoin community, we advocate for responsible rules to make the benefits of Bitcoin available around the world.
+                </p>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid gap-8 md:grid-cols-2 mb-24">
+            <div className="rounded-2xl border border-elegant-border bg-white/[0.01] p-10">
+              <h4 className="text-[10px] uppercase tracking-[0.3em] text-gold mb-6 font-semibold">Institutional Grade</h4>
+              <h3 className="text-2xl font-serif italic text-white mb-6">Tailor-made OTC Solutions</h3>
+              <p className="text-sm leading-relaxed text-white/50">
+                Our OTC solution is tailor-made for institutional traders and investors.¹ Execute trades by partnering with Northshore’s OTC trading desk or manage your own trading execution strategy through eOTC, Northshore’s automated trading platform.
+              </p>
+            </div>
+            <div className="rounded-2xl border border-elegant-border bg-white/[0.01] p-10">
+              <h4 className="text-[10px] uppercase tracking-[0.3em] text-gold mb-6 font-semibold">Governance</h4>
+              <h3 className="text-2xl font-serif italic text-white mb-6">Global Regulatory Engagement</h3>
+              <p className="text-sm leading-relaxed text-white/50">
+                We have worked with regulatory stakeholders and lawmakers around the world to help shape thoughtful regulation that fosters both consumer protection and innovation. We have spent considerable time applying for and becoming licensed and regulated in various jurisdictions across the world. This is not the easier path but we believe it is the right one.
+              </p>
+            </div>
+          </div>
         </section>
       </main>
       <Footer />
