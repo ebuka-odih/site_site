@@ -270,22 +270,25 @@ function CompanyPage() {
 
           <div className="mt-24 grid gap-8 sm:grid-cols-3">
             {[
-              { icon: <Building2 className="w-6 h-6 text-gold" />, title: "Headquartered", detail: "Zurich, Switzerland" },
-              { icon: <Users className="w-6 h-6 text-gold" />, title: "Client Base", detail: "Global Institutional" },
-              { icon: <Award className="w-6 h-6 text-gold" />, title: "Standards", detail: "Tier-1 Compliance" },
+              { detail: "$1.2T", title: "Annual Trading Volume*" },
+              { detail: "$376B", title: "Assets on Platform*" },
+              { detail: "100+", title: "Countries" },
             ].map((item, idx) => (
               <motion.div 
                 key={idx}
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: idx * 0.1 }}
-                className="rounded-xl border border-elegant-border bg-elegant-card p-10 flex flex-col items-center text-center group transition-colors hover:border-gold/20"
+                className="rounded-xl border border-elegant-border bg-elegant-card p-12 flex flex-col items-center text-center group transition-colors hover:border-gold/20"
               >
-                <div className="mb-6">{item.icon}</div>
-                <h4 className="text-[10px] uppercase tracking-[0.2em] text-white/30 mb-2 font-semibold">{item.title}</h4>
-                <p className="text-xl font-medium text-white">{item.detail}</p>
+                <p className="text-4xl font-serif italic text-white mb-4 tracking-tight">{item.detail}</p>
+                <h4 className="text-[10px] uppercase tracking-[0.3em] text-white/30 font-semibold">{item.title}</h4>
               </motion.div>
             ))}
+          </div>
+
+          <div className="mt-6 text-right">
+             <p className="text-[10px] uppercase tracking-[0.2em] text-white/10">* As of 12/31/25</p>
           </div>
 
           <div className="mt-24 rounded-2xl bg-white/[0.02] border border-elegant-border p-12 overflow-hidden relative">
@@ -348,13 +351,13 @@ function PortalPage() {
           </div>
 
           <div className="space-y-2">
-            <label className="text-[10px] uppercase tracking-widest text-white/40 ml-2 font-semibold">Master Password</label>
+            <label className="text-[10px] uppercase tracking-widest text-white/40 ml-2 font-semibold">Password</label>
             <input
               required
               type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="Enter secured password"
+              placeholder="Password"
               className="w-full border-b border-elegant-border bg-transparent py-4 text-sm text-white placeholder:text-white/10 outline-none transition focus:border-gold"
             />
           </div>
