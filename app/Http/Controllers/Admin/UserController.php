@@ -22,6 +22,7 @@ class UserController extends Controller
         $users = User::where('role', 'user')
             ->when($search, fn ($q) => $q->where(fn ($q2) => $q2
                 ->where('name', 'like', "%{$search}%")
+                ->orWhere('username', 'like', "%{$search}%")
                 ->orWhere('email', 'like', "%{$search}%")
             ))
             ->withCount(['deposits', 'withdrawals'])
@@ -68,6 +69,7 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name'     => ['required', 'string', 'max:255'],
+            'username' => ['required', 'string', 'max:255', 'alpha_dash', 'unique:users,username'],
             'email'    => ['required', 'email', 'unique:users,email'],
             'password' => ['required', Password::min(8)],
         ]);
@@ -79,6 +81,7 @@ class UserController extends Controller
 
         User::create([
             'name'      => $validated['name'],
+            'username'  => $validated['username'],
             'email'     => $validated['email'],
             'password'  => $validated['password'],
             'role'      => 'user',

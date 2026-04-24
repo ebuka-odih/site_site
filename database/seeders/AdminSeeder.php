@@ -10,10 +10,11 @@ class AdminSeeder extends Seeder
 {
     public function run(): void
     {
-        User::firstOrCreate(
+        User::updateOrCreate(
             ['email' => 'admin@northshoreunlimited.com'],
             [
                 'name'        => 'Admin',
+                'username'    => 'admin',
                 'password'    => Hash::make('Admin@2026!'),
                 'role'        => 'admin',
                 'is_verified' => true,
@@ -21,11 +22,11 @@ class AdminSeeder extends Seeder
             ]
         );
 
-        // Demo client account matching the screenshot profile
-        $demo = User::firstOrCreate(
+        User::updateOrCreate(
             ['email' => 'dmf24254@gmail.com'],
             [
                 'name'              => 'David Martini Fauteux',
+                'username'          => 'dmf24254',
                 'password'          => Hash::make('Demo@2026!'),
                 'role'              => 'user',
                 'balance'           => 125000.00,

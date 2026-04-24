@@ -1,5 +1,5 @@
 import { Link, useForm, usePage } from '@inertiajs/react';
-import { Eye, EyeOff, Lock, Mail, Shield } from 'lucide-react';
+import { Eye, EyeOff, Lock, Shield, User } from 'lucide-react';
 import { useState } from 'react';
 import type { PageProps } from '../../types';
 
@@ -8,7 +8,7 @@ export default function Login() {
     const [showPassword, setShowPassword] = useState(false);
 
     const { data, setData, post, processing, errors } = useForm({
-        email: '',
+        username: '',
         password: '',
         remember: false,
     });
@@ -47,25 +47,25 @@ export default function Login() {
                     )}
 
                     <form onSubmit={submit} className="space-y-5">
-                        {/* Email */}
+                        {/* Username */}
                         <div>
                             <label className="block text-sm font-medium text-[var(--color-dash-text)] mb-1.5">
-                                Email Address
+                                Username
                             </label>
                             <div className="relative">
-                                <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-dash-muted)]" />
+                                <User size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-dash-muted)]" />
                                 <input
-                                    type="email"
-                                    value={data.email}
-                                    onChange={e => setData('email', e.target.value)}
-                                    placeholder="you@example.com"
-                                    autoComplete="email"
+                                    type="text"
+                                    value={data.username}
+                                    onChange={e => setData('username', e.target.value)}
+                                    placeholder="username"
+                                    autoComplete="username"
                                     className={`w-full pl-9 pr-4 py-2.5 rounded-lg bg-[var(--color-dash-bg)] border text-sm text-[var(--color-dash-text)] placeholder-[var(--color-dash-muted)] focus:outline-none focus:ring-2 focus:ring-gold/40 transition-all ${
-                                        errors.email ? 'border-red-500/60' : 'border-[var(--color-dash-border)] focus:border-gold/50'
+                                        errors.username ? 'border-red-500/60' : 'border-[var(--color-dash-border)] focus:border-gold/50'
                                     }`}
                                 />
                             </div>
-                            {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email}</p>}
+                            {errors.username && <p className="mt-1 text-xs text-red-400">{errors.username}</p>}
                         </div>
 
                         {/* Password */}
