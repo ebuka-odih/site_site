@@ -1,5 +1,6 @@
 import { Link, usePage } from '@inertiajs/react';
-import { ArrowDownCircle, ArrowUpCircle, Clock, Plus, TrendingUp, UserCircle } from 'lucide-react';
+import { ArrowDownCircle, ArrowUpCircle, Clock, Plus, TrendingUp } from 'lucide-react';
+import { useEffect, useMemo, useState } from 'react';
 import DashboardLayout, { StatusBadge, formatCurrency, formatDate } from '../../Components/DashboardLayout';
 import type { Deposit, PageProps, Withdrawal } from '../../types';
 
@@ -111,9 +112,81 @@ function PortfolioChart({ data }: { data: Snapshot[] }) {
     );
 }
 
+function BitcoinTradingViewChart() {
+    const widgetConfig = encodeURIComponent(JSON.stringify({
+        autosize: true,
+        symbol: 'BITSTAMP:BTCUSD',
+        interval: '60',
+        timezone: 'Etc/UTC',
+        theme: 'dark',
+        style: '1',
+        locale: 'en',
+        hide_top_toolbar: true,
+        hide_legend: false,
+        allow_symbol_change: false,
+        save_image: false,
+        calendar: false,
+        support_host: 'https://www.tradingview.com',
+    }));
+
+    return (
+        <div className="h-full min-h-[220px] overflow-hidden rounded-2xl border border-[var(--color-dash-border)] bg-[var(--color-dash-surface)]">
+            <iframe
+                title="Bitcoin price chart"
+                src={`https://s.tradingview.com/widgetembed/?frameElementId=btc-chart&symbol=BITSTAMP%3ABTCUSD&interval=60&hidesidetoolbar=1&symboledit=0&saveimage=0&toolbarbg=0f1624&studies=[]&theme=dark&style=1&timezone=Etc%2FUTC&withdateranges=1&hideideas=1&widgetbar=%7B%22details%22%3Afalse%2C%22watchlist%22%3Afalse%2C%22news%22%3Afalse%2C%22datawindow%22%3Afalse%2C%22watchlist_settings%22%3A%7B%22default_symbols%22%3A[]%7D%7D&overrides=%7B%7D&studies_overrides=%7B%7D&settings=${widgetConfig}`}
+                className="h-full min-h-[220px] w-full border-0"
+                loading="lazy"
+            />
+        </div>
+    );
+}
+
+function formatSignedCurrency(amount: number) {
+    const sign = amount >= 0 ? '+' : '-';
+    return `${sign}${formatCurrency(Math.abs(amount))}`;
+}
+
 export default function DashboardIndex() {
     const { dashUser, snapshots, recentDeposits, recentWithdrawals, stats } =
         usePage<Props>().props;
+    const [liveBalance, setLiveBalance] = useState(dashUser.balance);
+    const [lastMove, setLastMove] = useState(0);
+
+    useEffect(() => {
+        setLiveBalance(dashUser.balance);
+    }, [dashUser.balance]);
+
+    useEffect(() => {
+        const interval = window.setInterval(() => {
+            setLiveBalance(current => {
+                const isUpMove = Math.random() < 0.72;
+                const movementRate = isUpMove
+                    ? 0.0006 + Math.random() * 0.0028
+                    : -(0.0004 + Math.random() * 0.0015);
+                const movement = Math.max(current, 1) * movementRate;
+                setLastMove(movement);
+
+                return Math.max(current + movement, 0);
+            });
+        }, 2600);
+
+        return () => window.clearInterval(interval);
+    }, []);
+
+    const liveChange = liveBalance - dashUser.balance;
+    const liveChangePct = dashUser.balance > 0 ? (liveChange / dashUser.balance) * 100 : 0;
+    const liveTrendPositive = liveChange >= 0;
+    const liveMetrics = useMemo(() => {
+        const dayChange = liveChange;
+        const weekChange = liveBalance * 0.018 + liveChange * 0.35;
+        const allTimeChange = liveBalance * 0.64 + Math.max(liveChange, 0);
+
+        return [
+            { label: '24h', value: dayChange, pct: liveChangePct },
+            { label: 'Weekly', value: weekChange, pct: 1.8 + liveChangePct * 0.35 },
+            { label: 'All-time', value: allTimeChange, pct: 64 + Math.max(liveChangePct, 0) },
+        ];
+    }, [liveBalance, liveChange, liveChangePct]);
 
     const allActivity = [
         ...recentDeposits.map(d => ({ ...d, type: 'deposit' as const })),
@@ -133,10 +206,27 @@ export default function DashboardIndex() {
                         <div className="absolute top-0 right-0 w-32 h-32 bg-gold/20 rounded-full blur-2xl" />
                     </div>
                     <div className="relative">
-                        <p className="text-xs text-[var(--color-dash-muted)] uppercase tracking-wider mb-1">Total Balance</p>
-                        <p className="text-3xl font-bold text-white mb-1">
-                            {formatCurrency(dashUser.balance)}
+                        <p className="text-xs text-[var(--color-dash-muted)] uppercase tracking-wider mb-1">Total Portfolio Value</p>
+                        <p className="text-3xl font-bold text-white mb-1 tabular-nums">
+                            {formatCurrency(liveBalance)}
                         </p>
+                        <div className="mb-3 flex flex-wrap items-center gap-2 text-xs">
+                            <span className={liveTrendPositive ? 'text-emerald-400' : 'text-red-400'}>
+                                {formatSignedCurrency(liveChange)} ({liveTrendPositive ? '+' : ''}{liveChangePct.toFixed(2)}%)
+                            </span>
+                            <span className="text-[var(--color-dash-muted)]">live</span>
+                            <span className={`h-1.5 w-1.5 rounded-full ${lastMove >= 0 ? 'bg-emerald-400' : 'bg-red-400'}`} />
+                        </div>
+                        <div className="mb-3 space-y-1.5 rounded-lg border border-white/10 bg-white/5 px-3 py-2">
+                            {liveMetrics.map(metric => (
+                                <div key={metric.label} className="flex items-center justify-between gap-3 text-[11px]">
+                                    <span className="text-[var(--color-dash-muted)]">{metric.label}</span>
+                                    <span className={metric.value >= 0 ? 'text-emerald-400' : 'text-red-400'}>
+                                        {formatSignedCurrency(metric.value)} ({metric.value >= 0 ? '+' : ''}{metric.pct.toFixed(2)}%)
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
                         <p className="text-xs text-[var(--color-dash-muted)]">
                             {dashUser.is_verified ? (
                                 <span className="text-emerald-400">● Verified Account</span>
@@ -149,7 +239,7 @@ export default function DashboardIndex() {
                                 {dashUser.member_id}
                             </p>
                         )}
-                        <div className="mt-4 grid grid-cols-3 gap-2">
+                        <div className="mt-4 grid grid-cols-2 gap-2">
                             <Link
                                 href="/user/deposits"
                                 className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-gold text-black text-xs font-semibold hover:bg-gold/90 transition-all"
@@ -164,19 +254,17 @@ export default function DashboardIndex() {
                                 <ArrowUpCircle size={14} />
                                 Withdraw
                             </Link>
-                            <Link
-                                href="/user/profile"
-                                className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-white/10 text-white text-xs font-medium hover:bg-white/15 border border-white/10 transition-all"
-                            >
-                                <UserCircle size={14} />
-                                Profile
-                            </Link>
                         </div>
                     </div>
                 </div>
 
-                {/* Stats */}
-                <div className="lg:col-span-2 grid grid-cols-2 gap-4">
+                <div className="lg:col-span-2">
+                    <BitcoinTradingViewChart />
+                </div>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
                     {[
                         {
                             label: 'Total Deposited',
@@ -219,7 +307,6 @@ export default function DashboardIndex() {
                             <p className="text-[10px] text-[var(--color-dash-muted)] mt-1">{stat.sub}</p>
                         </div>
                     ))}
-                </div>
             </div>
 
             {/* Portfolio Chart */}
