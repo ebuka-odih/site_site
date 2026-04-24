@@ -88,14 +88,14 @@ export default function DashboardLayout({ children, title, breadcrumb }: Props) 
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
 
     const userNav: NavItem[] = [
-        { label: 'Overview',    href: '/dashboard',             icon: <LayoutDashboard size={18} />, exact: true },
-        { label: 'Deposits',    href: '/dashboard/deposits',    icon: <ArrowDownCircle size={18} /> },
-        { label: 'Withdrawals', href: '/dashboard/withdrawals', icon: <ArrowUpCircle size={18} /> },
-        { label: 'Profile',     href: '/dashboard/profile',     icon: <User size={18} /> },
+        { label: 'Dashboard',   href: '/user/dashboard',     icon: <LayoutDashboard size={18} />, exact: true },
+        { label: 'Deposits',    href: '/user/deposits',      icon: <ArrowDownCircle size={18} /> },
+        { label: 'Withdrawals', href: '/user/withdrawals',   icon: <ArrowUpCircle size={18} /> },
+        { label: 'Profile',     href: '/user/profile',       icon: <User size={18} /> },
     ];
 
     const adminNav: NavItem[] = [
-        { label: 'Dashboard',   href: '/admin',              icon: <LayoutDashboard size={18} />, exact: true },
+        { label: 'Dashboard',   href: '/admin/dashboard',    icon: <LayoutDashboard size={18} />, exact: true },
         { label: 'Users',       href: '/admin/users',        icon: <Users size={18} /> },
         { label: 'Deposits',    href: '/admin/deposits',     icon: <ArrowDownCircle size={18} /> },
         { label: 'Withdrawals', href: '/admin/withdrawals',  icon: <ArrowUpCircle size={18} /> },
@@ -158,7 +158,7 @@ export default function DashboardLayout({ children, title, breadcrumb }: Props) 
                     </Link>
                 ) : (
                     <Link
-                        href="/dashboard/profile"
+                        href="/user/profile"
                         className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--color-dash-muted)] hover:text-[var(--color-dash-text)] hover:bg-[var(--color-dash-surface-2)] transition-all"
                     >
                         <Settings size={18} />

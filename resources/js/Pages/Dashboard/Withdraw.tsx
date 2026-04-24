@@ -28,7 +28,7 @@ export default function WithdrawPage() {
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        post('/dashboard/withdrawals', { onSuccess: () => reset() });
+        post('/user/withdrawals', { onSuccess: () => reset() });
     }
 
     const insufficientBalance = data.amount && parseFloat(data.amount) > balance;
@@ -37,7 +37,7 @@ export default function WithdrawPage() {
         <DashboardLayout
             title="Withdrawals"
             breadcrumb={[
-                { label: 'Dashboard', href: '/dashboard' },
+                { label: 'Dashboard', href: '/user/dashboard' },
                 { label: 'Withdrawals' },
             ]}
         >

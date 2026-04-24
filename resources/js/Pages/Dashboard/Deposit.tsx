@@ -55,7 +55,7 @@ export default function DepositPage() {
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        post('/dashboard/deposits', {
+        post('/user/deposits', {
             forceFormData: true,
             onSuccess: () => { reset(); setStep(1); setPreviewUrl(null); },
         });
@@ -65,7 +65,7 @@ export default function DepositPage() {
         <DashboardLayout
             title="Deposits"
             breadcrumb={[
-                { label: 'Dashboard', href: '/dashboard' },
+                { label: 'Dashboard', href: '/user/dashboard' },
                 { label: 'Deposits' },
             ]}
         >

@@ -11,7 +11,7 @@ const statusOptions = ['pending', 'approved', 'processing', 'completed', 'reject
 
 export default function AdminWithdrawals({ withdrawals, filters }: Props) {
     return (
-        <DashboardLayout title="Withdrawals" breadcrumb={[{ label: 'Admin', href: '/admin' }, { label: 'Withdrawals' }]}>
+        <DashboardLayout title="Withdrawals" breadcrumb={[{ label: 'Admin', href: '/admin/dashboard' }, { label: 'Withdrawals' }]}>
             <div className="space-y-6">
                 <div>
                     <h1 className="text-xl font-semibold text-[var(--color-dash-text)]">Withdrawals</h1>

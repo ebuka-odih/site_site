@@ -26,7 +26,7 @@ export default function AdminUsers({ users, filters }: Props) {
     }
 
     return (
-        <DashboardLayout title="Users" breadcrumb={[{ label: 'Admin', href: '/admin' }, { label: 'Users' }]}>
+        <DashboardLayout title="Users" breadcrumb={[{ label: 'Admin', href: '/admin/dashboard' }, { label: 'Users' }]}>
             <div className="space-y-6">
                 <div>
                     <h1 className="text-xl font-semibold text-[var(--color-dash-text)]">Users</h1>

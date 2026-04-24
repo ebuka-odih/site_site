@@ -24,8 +24,13 @@ Route::middleware('guest')->group(function () {
 Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->middleware('auth');
 
 // ─── User Dashboard ────────────────────────────────────────────────────────
-Route::middleware('auth')->prefix('dashboard')->group(function () {
-    Route::get('/', [DashboardController::class, 'index'])->name('dashboard');
+Route::redirect('/dashboard', '/user/dashboard')->middleware('auth');
+Route::redirect('/dashboard/deposits', '/user/deposits')->middleware('auth');
+Route::redirect('/dashboard/withdrawals', '/user/withdrawals')->middleware('auth');
+Route::redirect('/dashboard/profile', '/user/profile')->middleware('auth');
+
+Route::middleware('auth')->prefix('user')->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     Route::get('/deposits', [DepositController::class, 'index'])->name('deposits.index');
     Route::post('/deposits', [DepositController::class, 'store'])->name('deposits.store');
@@ -40,7 +45,8 @@ Route::middleware('auth')->prefix('dashboard')->group(function () {
 
 // ─── Admin Dashboard ───────────────────────────────────────────────────────
 Route::middleware(['auth', 'admin'])->prefix('admin')->group(function () {
-    Route::get('/', [Admin\DashboardController::class, 'index'])->name('admin.dashboard');
+    Route::redirect('/', '/admin/dashboard');
+    Route::get('/dashboard', [Admin\DashboardController::class, 'index'])->name('admin.dashboard');
 
     Route::get('/users', [Admin\UserController::class, 'index'])->name('admin.users');
     Route::post('/users', [Admin\UserController::class, 'store'])->name('admin.users.store');

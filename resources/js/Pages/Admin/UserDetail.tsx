@@ -48,7 +48,7 @@ export default function AdminUserDetail({ profileUser, deposits, withdrawals, st
     }
 
     return (
-        <DashboardLayout title={profileUser.name} breadcrumb={[{ label: 'Admin', href: '/admin' }, { label: 'Users', href: '/admin/users' }, { label: profileUser.name }]}>
+        <DashboardLayout title={profileUser.name} breadcrumb={[{ label: 'Admin', href: '/admin/dashboard' }, { label: 'Users', href: '/admin/users' }, { label: profileUser.name }]}>
             <div className="space-y-6">
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>

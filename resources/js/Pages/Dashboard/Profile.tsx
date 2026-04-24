@@ -64,14 +64,14 @@ export default function ProfilePage() {
 
     function submitProfile(e: React.FormEvent) {
         e.preventDefault();
-        profileForm.put('/dashboard/profile', {
+        profileForm.put('/user/profile', {
             onSuccess: () => setEditMode(false),
         });
     }
 
     function submitPassword(e: React.FormEvent) {
         e.preventDefault();
-        pwForm.put('/dashboard/profile/password', {
+        pwForm.put('/user/profile/password', {
             onSuccess: () => { pwForm.reset(); setShowPasswordForm(false); },
         });
     }
@@ -80,7 +80,7 @@ export default function ProfilePage() {
         <DashboardLayout
             title="Profile"
             breadcrumb={[
-                { label: 'Dashboard', href: '/dashboard' },
+                { label: 'Dashboard', href: '/user/dashboard' },
                 { label: 'Profile' },
             ]}
         >

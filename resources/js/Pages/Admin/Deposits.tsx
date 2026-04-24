@@ -11,7 +11,7 @@ const statusOptions = ['pending', 'approved', 'rejected', 'all'] as const;
 
 export default function AdminDeposits({ deposits, filters }: Props) {
     return (
-        <DashboardLayout title="Deposits" breadcrumb={[{ label: 'Admin', href: '/admin' }, { label: 'Deposits' }]}>
+        <DashboardLayout title="Deposits" breadcrumb={[{ label: 'Admin', href: '/admin/dashboard' }, { label: 'Deposits' }]}>
             <div className="space-y-6">
                 <PageHeader title="Deposits" description="Review deposit requests and credit approved funds." />
                 <StatusTabs baseUrl="/admin/deposits" active={filters.status} />
