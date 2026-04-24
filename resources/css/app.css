@@ -15,6 +15,20 @@
     --color-elegant-bg: #050505;
     --color-elegant-card: #111111;
     --color-elegant-border: rgba(255, 255, 255, 0.1);
+
+    /* Dashboard semi-dark theme */
+    --color-dash-bg: #0d1117;
+    --color-dash-sidebar: #10141c;
+    --color-dash-surface: #161b27;
+    --color-dash-surface-2: #1e2435;
+    --color-dash-border: rgba(255, 255, 255, 0.07);
+    --color-dash-muted: #6b7a99;
+    --color-dash-text: #e2e8f0;
+    --color-dash-green: #10b981;
+    --color-dash-red: #ef4444;
+    --color-dash-amber: #f59e0b;
+    --color-dash-blue: #3b82f6;
+    --color-dash-indigo: #6366f1;
 }
 
 @layer base {

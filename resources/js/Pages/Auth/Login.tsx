@@ -1,0 +1,138 @@
+import { Link, useForm, usePage } from '@inertiajs/react';
+import { Eye, EyeOff, Lock, Mail, Shield } from 'lucide-react';
+import { useState } from 'react';
+import type { PageProps } from '../../types';
+
+export default function Login() {
+    const { flash } = usePage<PageProps>().props;
+    const [showPassword, setShowPassword] = useState(false);
+
+    const { data, setData, post, processing, errors } = useForm({
+        email: '',
+        password: '',
+        remember: false,
+    });
+
+    function submit(e: React.FormEvent) {
+        e.preventDefault();
+        post('/login');
+    }
+
+    return (
+        <div className="min-h-screen bg-[var(--color-dash-bg)] flex flex-col items-center justify-center px-4">
+            {/* Background glow */}
+            <div className="absolute inset-0 overflow-hidden pointer-events-none">
+                <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-96 h-96 bg-gold/5 rounded-full blur-3xl" />
+            </div>
+
+            <div className="w-full max-w-md relative">
+                {/* Header */}
+                <div className="text-center mb-8">
+                    <Link href="/" className="inline-flex items-center gap-2 mb-6">
+                        <div className="w-10 h-10 rounded-xl bg-gold/20 border border-gold/30 flex items-center justify-center">
+                            <Shield size={20} className="text-gold" />
+                        </div>
+                        <span className="text-lg font-semibold text-white">Northshore Unlimited</span>
+                    </Link>
+                    <h1 className="text-2xl font-semibold text-white mb-1">Sign in to your account</h1>
+                    <p className="text-sm text-[var(--color-dash-muted)]">Enter your credentials to access the portal</p>
+                </div>
+
+                {/* Card */}
+                <div className="bg-[var(--color-dash-surface)] border border-[var(--color-dash-border)] rounded-2xl p-6 sm:p-8 shadow-2xl">
+                    {flash.success && (
+                        <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/25 text-sm text-emerald-400">
+                            {flash.success}
+                        </div>
+                    )}
+
+                    <form onSubmit={submit} className="space-y-5">
+                        {/* Email */}
+                        <div>
+                            <label className="block text-sm font-medium text-[var(--color-dash-text)] mb-1.5">
+                                Email Address
+                            </label>
+                            <div className="relative">
+                                <Mail size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-dash-muted)]" />
+                                <input
+                                    type="email"
+                                    value={data.email}
+                                    onChange={e => setData('email', e.target.value)}
+                                    placeholder="you@example.com"
+                                    autoComplete="email"
+                                    className={`w-full pl-9 pr-4 py-2.5 rounded-lg bg-[var(--color-dash-bg)] border text-sm text-[var(--color-dash-text)] placeholder-[var(--color-dash-muted)] focus:outline-none focus:ring-2 focus:ring-gold/40 transition-all ${
+                                        errors.email ? 'border-red-500/60' : 'border-[var(--color-dash-border)] focus:border-gold/50'
+                                    }`}
+                                />
+                            </div>
+                            {errors.email && <p className="mt-1 text-xs text-red-400">{errors.email}</p>}
+                        </div>
+
+                        {/* Password */}
+                        <div>
+                            <label className="block text-sm font-medium text-[var(--color-dash-text)] mb-1.5">
+                                Password
+                            </label>
+                            <div className="relative">
+                                <Lock size={16} className="absolute left-3 top-1/2 -translate-y-1/2 text-[var(--color-dash-muted)]" />
+                                <input
+                                    type={showPassword ? 'text' : 'password'}
+                                    value={data.password}
+                                    onChange={e => setData('password', e.target.value)}
+                                    placeholder="••••••••"
+                                    autoComplete="current-password"
+                                    className={`w-full pl-9 pr-10 py-2.5 rounded-lg bg-[var(--color-dash-bg)] border text-sm text-[var(--color-dash-text)] placeholder-[var(--color-dash-muted)] focus:outline-none focus:ring-2 focus:ring-gold/40 transition-all ${
+                                        errors.password ? 'border-red-500/60' : 'border-[var(--color-dash-border)] focus:border-gold/50'
+                                    }`}
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(v => !v)}
+                                    className="absolute right-3 top-1/2 -translate-y-1/2 text-[var(--color-dash-muted)] hover:text-[var(--color-dash-text)]"
+                                >
+                                    {showPassword ? <EyeOff size={15} /> : <Eye size={15} />}
+                                </button>
+                            </div>
+                            {errors.password && <p className="mt-1 text-xs text-red-400">{errors.password}</p>}
+                        </div>
+
+                        {/* Remember me */}
+                        <div className="flex items-center gap-2">
+                            <input
+                                type="checkbox"
+                                id="remember"
+                                checked={data.remember}
+                                onChange={e => setData('remember', e.target.checked)}
+                                className="w-4 h-4 rounded border-[var(--color-dash-border)] bg-[var(--color-dash-bg)] accent-gold"
+                            />
+                            <label htmlFor="remember" className="text-sm text-[var(--color-dash-muted)]">
+                                Keep me signed in
+                            </label>
+                        </div>
+
+                        {/* Submit */}
+                        <button
+                            type="submit"
+                            disabled={processing}
+                            className="w-full py-2.5 rounded-lg bg-gold text-black text-sm font-semibold hover:bg-gold/90 disabled:opacity-60 disabled:cursor-not-allowed transition-all"
+                        >
+                            {processing ? 'Signing in…' : 'Sign In'}
+                        </button>
+                    </form>
+                </div>
+
+                <div className="mt-6 text-center">
+                    <Link href="/" className="text-sm text-[var(--color-dash-muted)] hover:text-[var(--color-dash-text)] transition-colors">
+                        ← Return to homepage
+                    </Link>
+                </div>
+
+                {/* Security note */}
+                <div className="mt-4 flex items-center justify-center gap-1.5 text-[10px] text-[var(--color-dash-muted)]">
+                    <Shield size={11} />
+                    <span>256-bit SSL secured connection</span>
+                </div>
+            </div>
+        </div>
+    );
+}

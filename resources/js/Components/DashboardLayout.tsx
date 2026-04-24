@@ -1,0 +1,291 @@
+import { Link, usePage } from '@inertiajs/react';
+import {
+    ArrowDownCircle,
+    ArrowUpCircle,
+    BarChart3,
+    ChevronRight,
+    LayoutDashboard,
+    LogOut,
+    Menu,
+    Settings,
+    Shield,
+    User,
+    Users,
+    X,
+} from 'lucide-react';
+import { useState } from 'react';
+import type { PageProps } from '../types';
+
+interface NavItem {
+    label: string;
+    href: string;
+    icon: React.ReactNode;
+    exact?: boolean;
+}
+
+interface Props {
+    children: React.ReactNode;
+    title?: string;
+    breadcrumb?: { label: string; href?: string }[];
+}
+
+const statusColors: Record<string, string> = {
+    pending:    'bg-amber-500/15 text-amber-400 border border-amber-500/25',
+    approved:   'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25',
+    rejected:   'bg-red-500/15 text-red-400 border border-red-500/25',
+    processing: 'bg-blue-500/15 text-blue-400 border border-blue-500/25',
+    completed:  'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25',
+};
+
+export function StatusBadge({ status }: { status: string }) {
+    return (
+        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium capitalize ${statusColors[status] ?? 'bg-gray-500/15 text-gray-400 border border-gray-500/25'}`}>
+            {status}
+        </span>
+    );
+}
+
+export function formatCurrency(amount: number | string): string {
+    return new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(Number(amount));
+}
+
+export function formatDate(dateStr: string): string {
+    return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+}
+
+function FlashMessages() {
+    const { flash } = usePage<PageProps>().props;
+    const [dismissed, setDismissed] = useState<Record<string, boolean>>({});
+
+    return (
+        <>
+            {flash.success && !dismissed.success && (
+                <div className="fixed top-4 right-4 z-50 flex items-start gap-3 rounded-lg border border-emerald-500/30 bg-emerald-500/10 backdrop-blur px-4 py-3 text-sm text-emerald-300 max-w-sm shadow-lg">
+                    <span className="flex-1">{flash.success}</span>
+                    <button onClick={() => setDismissed(d => ({ ...d, success: true }))} className="shrink-0 opacity-60 hover:opacity-100">
+                        <X size={14} />
+                    </button>
+                </div>
+            )}
+            {flash.error && !dismissed.error && (
+                <div className="fixed top-4 right-4 z-50 flex items-start gap-3 rounded-lg border border-red-500/30 bg-red-500/10 backdrop-blur px-4 py-3 text-sm text-red-300 max-w-sm shadow-lg">
+                    <span className="flex-1">{flash.error}</span>
+                    <button onClick={() => setDismissed(d => ({ ...d, error: true }))} className="shrink-0 opacity-60 hover:opacity-100">
+                        <X size={14} />
+                    </button>
+                </div>
+            )}
+        </>
+    );
+}
+
+export default function DashboardLayout({ children, title, breadcrumb }: Props) {
+    const { auth } = usePage<PageProps>().props;
+    const user = auth.user!;
+    const isAdmin = user.role === 'admin';
+    const [sidebarOpen, setSidebarOpen] = useState(false);
+
+    const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+
+    const userNav: NavItem[] = [
+        { label: 'Overview',    href: '/dashboard',             icon: <LayoutDashboard size={18} />, exact: true },
+        { label: 'Deposits',    href: '/dashboard/deposits',    icon: <ArrowDownCircle size={18} /> },
+        { label: 'Withdrawals', href: '/dashboard/withdrawals', icon: <ArrowUpCircle size={18} /> },
+        { label: 'Profile',     href: '/dashboard/profile',     icon: <User size={18} /> },
+    ];
+
+    const adminNav: NavItem[] = [
+        { label: 'Dashboard',   href: '/admin',              icon: <LayoutDashboard size={18} />, exact: true },
+        { label: 'Users',       href: '/admin/users',        icon: <Users size={18} /> },
+        { label: 'Deposits',    href: '/admin/deposits',     icon: <ArrowDownCircle size={18} /> },
+        { label: 'Withdrawals', href: '/admin/withdrawals',  icon: <ArrowUpCircle size={18} /> },
+    ];
+
+    const nav = isAdmin ? adminNav : userNav;
+
+    const isActive = (item: NavItem) =>
+        item.exact ? currentPath === item.href : currentPath.startsWith(item.href);
+
+    const Sidebar = ({ mobile = false }: { mobile?: boolean }) => (
+        <nav className={`flex flex-col h-full ${mobile ? '' : ''}`}>
+            {/* Logo */}
+            <div className="px-5 pt-6 pb-4 border-b border-[var(--color-dash-border)]">
+                <Link href="/" className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-lg bg-gold/20 border border-gold/30 flex items-center justify-center">
+                        <BarChart3 size={16} className="text-gold" />
+                    </div>
+                    <div>
+                        <p className="text-xs font-semibold text-[var(--color-dash-text)] leading-none">Northshore</p>
+                        <p className="text-[10px] text-[var(--color-dash-muted)] leading-none mt-0.5">
+                            {isAdmin ? 'Admin Panel' : 'Client Portal'}
+                        </p>
+                    </div>
+                </Link>
+            </div>
+
+            {/* Nav items */}
+            <div className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
+                {isAdmin && (
+                    <p className="px-3 mb-2 text-[10px] uppercase tracking-wider text-[var(--color-dash-muted)] font-medium">Management</p>
+                )}
+                {nav.map(item => (
+                    <Link
+                        key={item.href}
+                        href={item.href}
+                        onClick={() => setSidebarOpen(false)}
+                        className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all ${
+                            isActive(item)
+                                ? 'bg-gold/10 text-gold border border-gold/20'
+                                : 'text-[var(--color-dash-muted)] hover:text-[var(--color-dash-text)] hover:bg-[var(--color-dash-surface-2)]'
+                        }`}
+                    >
+                        {item.icon}
+                        {item.label}
+                        {isActive(item) && <ChevronRight size={14} className="ml-auto" />}
+                    </Link>
+                ))}
+            </div>
+
+            {/* User section */}
+            <div className="px-3 pb-4 border-t border-[var(--color-dash-border)] pt-3">
+                {isAdmin ? (
+                    <Link
+                        href="/"
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--color-dash-muted)] hover:text-[var(--color-dash-text)] hover:bg-[var(--color-dash-surface-2)] transition-all"
+                    >
+                        <Shield size={18} />
+                        View Site
+                    </Link>
+                ) : (
+                    <Link
+                        href="/dashboard/profile"
+                        className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--color-dash-muted)] hover:text-[var(--color-dash-text)] hover:bg-[var(--color-dash-surface-2)] transition-all"
+                    >
+                        <Settings size={18} />
+                        Settings
+                    </Link>
+                )}
+                <Link
+                    href="/logout"
+                    method="post"
+                    as="button"
+                    className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--color-dash-muted)] hover:text-red-400 hover:bg-red-500/10 transition-all mt-0.5"
+                >
+                    <LogOut size={18} />
+                    Sign Out
+                </Link>
+
+                {/* User info */}
+                <div className="mt-3 px-3 py-2 rounded-lg bg-[var(--color-dash-surface-2)] border border-[var(--color-dash-border)]">
+                    <div className="flex items-center gap-2.5">
+                        <div className="w-8 h-8 rounded-full bg-gold/20 border border-gold/30 flex items-center justify-center text-gold font-semibold text-sm shrink-0">
+                            {user.name.charAt(0).toUpperCase()}
+                        </div>
+                        <div className="min-w-0">
+                            <p className="text-xs font-semibold text-[var(--color-dash-text)] truncate">{user.name}</p>
+                            <p className="text-[10px] text-[var(--color-dash-muted)] truncate">{user.email}</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </nav>
+    );
+
+    return (
+        <div className="min-h-screen bg-[var(--color-dash-bg)] text-[var(--color-dash-text)]">
+            <FlashMessages />
+
+            {/* Desktop Sidebar */}
+            <aside className="hidden lg:fixed lg:inset-y-0 lg:left-0 lg:flex lg:w-56 lg:flex-col bg-[var(--color-dash-sidebar)] border-r border-[var(--color-dash-border)]">
+                <Sidebar />
+            </aside>
+
+            {/* Mobile sidebar overlay */}
+            {sidebarOpen && (
+                <div className="lg:hidden fixed inset-0 z-40 flex">
+                    <div
+                        className="fixed inset-0 bg-black/60 backdrop-blur-sm"
+                        onClick={() => setSidebarOpen(false)}
+                    />
+                    <aside className="relative flex flex-col w-64 bg-[var(--color-dash-sidebar)] border-r border-[var(--color-dash-border)] z-50">
+                        <button
+                            onClick={() => setSidebarOpen(false)}
+                            className="absolute top-4 right-4 text-[var(--color-dash-muted)] hover:text-white"
+                        >
+                            <X size={20} />
+                        </button>
+                        <Sidebar mobile />
+                    </aside>
+                </div>
+            )}
+
+            {/* Main content */}
+            <div className="lg:pl-56 flex flex-col min-h-screen">
+                {/* Top header */}
+                <header className="sticky top-0 z-30 flex items-center gap-4 px-4 sm:px-6 h-14 bg-[var(--color-dash-sidebar)]/80 backdrop-blur border-b border-[var(--color-dash-border)]">
+                    <button
+                        onClick={() => setSidebarOpen(true)}
+                        className="lg:hidden text-[var(--color-dash-muted)] hover:text-white p-1"
+                    >
+                        <Menu size={20} />
+                    </button>
+
+                    {/* Breadcrumb */}
+                    <div className="flex items-center gap-1.5 text-sm flex-1 min-w-0">
+                        {breadcrumb?.map((crumb, i) => (
+                            <div key={i} className="flex items-center gap-1.5">
+                                {i > 0 && <ChevronRight size={14} className="text-[var(--color-dash-muted)] shrink-0" />}
+                                {crumb.href ? (
+                                    <Link href={crumb.href} className="text-[var(--color-dash-muted)] hover:text-white transition-colors truncate">
+                                        {crumb.label}
+                                    </Link>
+                                ) : (
+                                    <span className="text-[var(--color-dash-text)] font-medium truncate">{crumb.label}</span>
+                                )}
+                            </div>
+                        )) ?? <span className="text-[var(--color-dash-text)] font-medium">{title}</span>}
+                    </div>
+
+                    {/* Header right */}
+                    <div className="flex items-center gap-3 shrink-0">
+                        {!isAdmin && (
+                            <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-dash-surface-2)] border border-[var(--color-dash-border)] text-xs">
+                                <span className="text-[var(--color-dash-muted)]">Balance</span>
+                                <span className="text-gold font-semibold">{formatCurrency(user.balance)}</span>
+                            </div>
+                        )}
+                        {isAdmin && (
+                            <span className="px-2 py-0.5 rounded text-xs bg-gold/15 text-gold border border-gold/25 font-medium">
+                                Admin
+                            </span>
+                        )}
+                        <div className="w-7 h-7 rounded-full bg-gold/20 border border-gold/30 flex items-center justify-center text-gold font-semibold text-xs">
+                            {user.name.charAt(0).toUpperCase()}
+                        </div>
+                    </div>
+                </header>
+
+                {/* Page content */}
+                <main className="flex-1 p-4 sm:p-6">
+                    {children}
+                </main>
+            </div>
+
+            {/* Mobile bottom nav */}
+            <nav className="lg:hidden fixed bottom-0 inset-x-0 z-30 bg-[var(--color-dash-sidebar)] border-t border-[var(--color-dash-border)] flex">
+                {nav.map(item => (
+                    <Link
+                        key={item.href}
+                        href={item.href}
+                        className={`flex-1 flex flex-col items-center gap-1 py-2 text-[10px] font-medium transition-colors ${
+                            isActive(item) ? 'text-gold' : 'text-[var(--color-dash-muted)]'
+                        }`}
+                    >
+                        {item.icon}
+                        {item.label}
+                    </Link>
+                ))}
+            </nav>
+        </div>
+    );
+}
