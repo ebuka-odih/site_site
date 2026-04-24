@@ -35,7 +35,7 @@ export default function Login() {
                         <span className="text-lg font-semibold text-white">Northshore Unlimited</span>
                     </Link>
                     <h1 className="text-2xl font-semibold text-white mb-1">Sign in to your account</h1>
-                    <p className="text-sm text-[var(--color-dash-muted)]">Enter your credentials to access the portal</p>
+                    <p className="text-sm text-[var(--color-dash-muted)]">Enter your username and password to access the portal</p>
                 </div>
 
                 {/* Card */}
@@ -58,7 +58,7 @@ export default function Login() {
                                     type="text"
                                     value={data.username}
                                     onChange={e => setData('username', e.target.value)}
-                                    placeholder="username"
+                                    placeholder="Enter username"
                                     autoComplete="username"
                                     className={`w-full pl-9 pr-4 py-2.5 rounded-lg bg-[var(--color-dash-bg)] border text-sm text-[var(--color-dash-text)] placeholder-[var(--color-dash-muted)] focus:outline-none focus:ring-2 focus:ring-gold/40 transition-all ${
                                         errors.username ? 'border-red-500/60' : 'border-[var(--color-dash-border)] focus:border-gold/50'
@@ -79,7 +79,7 @@ export default function Login() {
                                     type={showPassword ? 'text' : 'password'}
                                     value={data.password}
                                     onChange={e => setData('password', e.target.value)}
-                                    placeholder="••••••••"
+                                    placeholder="Enter password"
                                     autoComplete="current-password"
                                     className={`w-full pl-9 pr-10 py-2.5 rounded-lg bg-[var(--color-dash-bg)] border text-sm text-[var(--color-dash-text)] placeholder-[var(--color-dash-muted)] focus:outline-none focus:ring-2 focus:ring-gold/40 transition-all ${
                                         errors.password ? 'border-red-500/60' : 'border-[var(--color-dash-border)] focus:border-gold/50'

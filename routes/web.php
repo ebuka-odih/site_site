@@ -16,6 +16,7 @@ Route::post('/trade-request', [TradeRequestController::class, 'store'])->name('t
 
 // ─── Authentication ────────────────────────────────────────────────────────
 Route::middleware('guest')->group(function () {
+    Route::get('/portal', [LoginController::class, 'show'])->name('portal');
     Route::get('/login', [LoginController::class, 'show'])->name('login');
     Route::post('/login', [LoginController::class, 'store'])->name('login.store');
 });
