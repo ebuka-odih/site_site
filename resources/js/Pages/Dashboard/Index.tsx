@@ -142,19 +142,26 @@ function BitcoinTradingViewChart() {
 }
 
 function formatSignedCurrency(amount: number) {
-    const sign = amount >= 0 ? '+' : '-';
-    return `${sign}${formatCurrency(Math.abs(amount))}`;
+    const safeAmount = Number.isFinite(amount) ? amount : 0;
+    const sign = safeAmount >= 0 ? '+' : '-';
+    return `${sign}${formatCurrency(Math.abs(safeAmount))}`;
+}
+
+function safeNumber(value: number | string | null | undefined) {
+    const parsed = Number(value);
+    return Number.isFinite(parsed) ? parsed : 0;
 }
 
 export default function DashboardIndex() {
     const { dashUser, snapshots, recentDeposits, recentWithdrawals, stats } =
         usePage<Props>().props;
-    const [liveBalance, setLiveBalance] = useState(dashUser.balance);
+    const baseBalance = safeNumber(dashUser.balance);
+    const [liveBalance, setLiveBalance] = useState(baseBalance);
     const [lastMove, setLastMove] = useState(0);
 
     useEffect(() => {
-        setLiveBalance(dashUser.balance);
-    }, [dashUser.balance]);
+        setLiveBalance(baseBalance);
+    }, [baseBalance]);
 
     useEffect(() => {
         const interval = window.setInterval(() => {
@@ -173,8 +180,8 @@ export default function DashboardIndex() {
         return () => window.clearInterval(interval);
     }, []);
 
-    const liveChange = liveBalance - dashUser.balance;
-    const liveChangePct = dashUser.balance > 0 ? (liveChange / dashUser.balance) * 100 : 0;
+    const liveChange = safeNumber(liveBalance) - baseBalance;
+    const liveChangePct = baseBalance > 0 ? (liveChange / baseBalance) * 100 : 0;
     const liveTrendPositive = liveChange >= 0;
     const liveMetrics = useMemo(() => {
         const dayChange = liveChange;
