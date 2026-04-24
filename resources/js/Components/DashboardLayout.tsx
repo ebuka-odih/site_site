@@ -87,6 +87,7 @@ export default function DashboardLayout({ children, title, breadcrumb }: Props) 
     const [sidebarOpen, setSidebarOpen] = useState(false);
 
     const currentPath = typeof window !== 'undefined' ? window.location.pathname : '';
+    const isAdminSection = currentPath.startsWith('/admin');
 
     const userNav: NavItem[] = [
         { label: 'Dashboard',   href: '/user/dashboard',     icon: <LayoutDashboard size={18} />, exact: true },
@@ -100,9 +101,10 @@ export default function DashboardLayout({ children, title, breadcrumb }: Props) 
         { label: 'Wallets',     href: '/admin/wallets',      icon: <Wallet size={18} /> },
         { label: 'Deposits',    href: '/admin/deposits',     icon: <ArrowDownCircle size={18} /> },
         { label: 'Withdrawals', href: '/admin/withdrawals',  icon: <ArrowUpCircle size={18} /> },
+        { label: 'User Dashboard', href: '/user/dashboard',  icon: <User size={18} /> },
     ];
 
-    const nav = isAdmin ? adminNav : userNav;
+    const nav = isAdminSection ? adminNav : userNav;
 
     const isActive = (item: NavItem) =>
         item.exact ? currentPath === item.href : currentPath.startsWith(item.href);
@@ -118,7 +120,7 @@ export default function DashboardLayout({ children, title, breadcrumb }: Props) 
                     <div>
                         <p className="text-xs font-semibold text-[var(--color-dash-text)] leading-none">Northshore</p>
                         <p className="text-[10px] text-[var(--color-dash-muted)] leading-none mt-0.5">
-                            {isAdmin ? 'Admin Panel' : 'Client Portal'}
+                            {isAdminSection ? 'Admin Panel' : 'Client Portal'}
                         </p>
                     </div>
                 </Link>
@@ -126,7 +128,7 @@ export default function DashboardLayout({ children, title, breadcrumb }: Props) 
 
             {/* Nav items */}
             <div className="flex-1 px-3 py-4 space-y-0.5 overflow-y-auto">
-                {isAdmin && (
+                {isAdminSection && (
                     <p className="px-3 mb-2 text-[10px] uppercase tracking-wider text-[var(--color-dash-muted)] font-medium">Management</p>
                 )}
                 {nav.map(item => (
@@ -149,7 +151,7 @@ export default function DashboardLayout({ children, title, breadcrumb }: Props) 
 
             {/* User section */}
             <div className="px-3 pb-4 border-t border-[var(--color-dash-border)] pt-3">
-                {isAdmin ? (
+                {isAdminSection ? (
                     <Link
                         href="/"
                         className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-[var(--color-dash-muted)] hover:text-[var(--color-dash-text)] hover:bg-[var(--color-dash-surface-2)] transition-all"
@@ -249,13 +251,13 @@ export default function DashboardLayout({ children, title, breadcrumb }: Props) 
 
                     {/* Header right */}
                     <div className="flex items-center gap-3 shrink-0">
-                        {!isAdmin && (
+                        {!isAdminSection && (
                             <div className="hidden sm:flex items-center gap-1.5 px-3 py-1 rounded-full bg-[var(--color-dash-surface-2)] border border-[var(--color-dash-border)] text-xs">
                                 <span className="text-[var(--color-dash-muted)]">Balance</span>
                                 <span className="text-gold font-semibold">{formatCurrency(user.balance)}</span>
                             </div>
                         )}
-                        {isAdmin && (
+                        {isAdminSection && (
                             <span className="px-2 py-0.5 rounded text-xs bg-gold/15 text-gold border border-gold/25 font-medium">
                                 Admin
                             </span>

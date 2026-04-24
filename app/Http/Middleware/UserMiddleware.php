@@ -10,10 +10,6 @@ class UserMiddleware
 {
     public function handle(Request $request, Closure $next): Response
     {
-        if ($request->user()?->isAdmin()) {
-            return redirect()->route('admin.dashboard');
-        }
-
         return $next($request);
     }
 }
