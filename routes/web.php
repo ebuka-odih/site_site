@@ -26,19 +26,19 @@ Route::post('/logout', [LoginController::class, 'destroy'])->name('logout')->mid
 
 // ─── User Dashboard ────────────────────────────────────────────────────────
 Route::redirect('/dashboard', '/user/dashboard')->middleware('auth');
-Route::redirect('/dashboard/deposits', '/user/wallet')->middleware('auth');
-Route::redirect('/dashboard/withdrawals', '/user/wallet')->middleware('auth');
+Route::redirect('/dashboard/deposits', '/user/deposits')->middleware('auth');
+Route::redirect('/dashboard/withdrawals', '/user/withdrawals')->middleware('auth');
 Route::redirect('/dashboard/profile', '/user/profile')->middleware('auth');
 
-Route::middleware('auth')->prefix('user')->group(function () {
+Route::middleware(['auth', 'user'])->prefix('user')->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
     Route::get('/wallet', [WalletController::class, 'index'])->name('wallet.index');
 
-    Route::redirect('/deposits', '/user/wallet')->name('deposits.index');
-    Route::post('/wallet/deposits', [DepositController::class, 'store'])->name('deposits.store');
+    Route::get('/deposits', [DepositController::class, 'index'])->name('deposits.index');
+    Route::post('/deposits', [DepositController::class, 'store'])->name('deposits.store');
 
-    Route::redirect('/withdrawals', '/user/wallet')->name('withdrawals.index');
-    Route::post('/wallet/withdrawals', [WithdrawalController::class, 'store'])->name('withdrawals.store');
+    Route::get('/withdrawals', [WithdrawalController::class, 'index'])->name('withdrawals.index');
+    Route::post('/withdrawals', [WithdrawalController::class, 'store'])->name('withdrawals.store');
 
     Route::get('/profile', [ProfileController::class, 'show'])->name('profile.show');
     Route::put('/profile', [ProfileController::class, 'update'])->name('profile.update');

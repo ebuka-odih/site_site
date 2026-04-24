@@ -12,7 +12,19 @@ class DepositController extends Controller
 {
     public function index()
     {
-        return redirect()->route('wallet.index');
+        $user = Auth::user();
+
+        $deposits = Deposit::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return Inertia::render('Dashboard/Deposit', [
+            'deposits' => $deposits,
+            'wallets'  => Wallet::where('is_active', true)
+                ->orderBy('currency')
+                ->orderBy('network')
+                ->get(),
+        ]);
     }
 
     public function store(Request $request)
@@ -41,7 +53,7 @@ class DepositController extends Controller
             'status'         => 'pending',
         ]);
 
-        return redirect()->route('wallet.index')
-            ->with('success', 'Deposit request submitted. Admin will review it from transaction history.');
+        return redirect()->route('deposits.index')
+            ->with('success', 'Deposit request submitted. It will be reviewed from transaction history.');
     }
 }

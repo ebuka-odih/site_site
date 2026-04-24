@@ -12,7 +12,20 @@ class WithdrawalController extends Controller
 {
     public function index()
     {
-        return redirect()->route('wallet.index');
+        $user = Auth::user();
+
+        $withdrawals = Withdrawal::where('user_id', $user->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(10);
+
+        return Inertia::render('Dashboard/Withdraw', [
+            'withdrawals' => $withdrawals,
+            'wallets'     => Wallet::where('is_active', true)
+                ->orderBy('currency')
+                ->orderBy('network')
+                ->get(),
+            'balance'     => (float) $user->balance,
+        ]);
     }
 
     public function store(Request $request)
@@ -45,7 +58,7 @@ class WithdrawalController extends Controller
             'status'         => 'pending',
         ]);
 
-        return redirect()->route('wallet.index')
-            ->with('success', 'Withdrawal request submitted. Admin has been notified in transaction history.');
+        return redirect()->route('withdrawals.index')
+            ->with('success', 'Withdrawal request submitted. It will be reviewed from transaction history.');
     }
 }

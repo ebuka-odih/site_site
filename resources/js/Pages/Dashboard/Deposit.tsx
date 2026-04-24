@@ -1,20 +1,16 @@
 import { useForm, usePage } from '@inertiajs/react';
 import { AlertCircle, CheckCircle, Copy, ExternalLink, Upload, X } from 'lucide-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import DashboardLayout, { StatusBadge, formatCurrency, formatDate } from '../../Components/DashboardLayout';
-import type { Deposit, PageProps, PaginatedData } from '../../types';
+import type { Deposit, PageProps, PaginatedData, Wallet } from '../../types';
 
 interface Props extends PageProps {
     deposits: PaginatedData<Deposit>;
-    wallets: Record<string, string>;
+    wallets: Wallet[];
 }
 
-const CURRENCIES = ['USDT', 'USDC', 'ETH', 'BTC'] as const;
 const CURRENCY_ICONS: Record<string, string> = {
     USDT: '₮', USDC: '₵', ETH: 'Ξ', BTC: '₿',
-};
-const NETWORKS: Record<string, string> = {
-    USDT: 'TRC-20 (Tron)', USDC: 'ERC-20 (Ethereum)', ETH: 'ERC-20 (Ethereum)', BTC: 'Bitcoin Mainnet',
 };
 
 export default function DepositPage() {
@@ -22,22 +18,38 @@ export default function DepositPage() {
     const [step, setStep] = useState<1 | 2 | 3>(1);
     const [copied, setCopied] = useState(false);
     const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+    const [secondsLeft, setSecondsLeft] = useState(900);
     const fileRef = useRef<HTMLInputElement>(null);
+    const defaultWalletId = wallets[0]?.id ? String(wallets[0].id) : '';
 
     const { data, setData, post, processing, errors, reset } = useForm<{
         amount: string;
-        currency: string;
+        wallet_id: string;
         tx_hash: string;
         proof: File | null;
     }>({
         amount: '',
-        currency: 'USDT',
+        wallet_id: defaultWalletId,
         tx_hash: '',
         proof: null,
     });
 
+    const selectedWallet = wallets.find(wallet => String(wallet.id) === data.wallet_id);
+
+    useEffect(() => {
+        if (step !== 2) {
+            return;
+        }
+        setSecondsLeft(900);
+        const timer = window.setInterval(() => setSecondsLeft(value => Math.max(value - 1, 0)), 1000);
+        return () => window.clearInterval(timer);
+    }, [step, data.wallet_id]);
+
     function copyAddress() {
-        navigator.clipboard.writeText(wallets[data.currency] ?? '');
+        if (!selectedWallet) {
+            return;
+        }
+        navigator.clipboard.writeText(selectedWallet.address);
         setCopied(true);
         setTimeout(() => setCopied(false), 2000);
     }
@@ -55,7 +67,7 @@ export default function DepositPage() {
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        post('/user/wallet/deposits', {
+        post('/user/deposits', {
             forceFormData: true,
             onSuccess: () => { reset(); setStep(1); setPreviewUrl(null); },
         });
@@ -100,25 +112,30 @@ export default function DepositPage() {
                                 <div className="space-y-4">
                                     <div>
                                         <label className="block text-xs font-medium text-[var(--color-dash-text)] mb-2">
-                                            Select Currency
+                                            Select Wallet
                                         </label>
                                         <div className="grid grid-cols-2 gap-2">
-                                            {CURRENCIES.map(c => (
+                                            {wallets.map(wallet => (
                                                 <button
-                                                    key={c}
+                                                    key={wallet.id}
                                                     type="button"
-                                                    onClick={() => setData('currency', c)}
+                                                    onClick={() => setData('wallet_id', String(wallet.id))}
                                                     className={`flex items-center gap-2 px-3 py-2.5 rounded-lg border text-sm font-medium transition-all ${
-                                                        data.currency === c
+                                                        data.wallet_id === String(wallet.id)
                                                             ? 'border-gold/60 bg-gold/10 text-gold'
                                                             : 'border-[var(--color-dash-border)] text-[var(--color-dash-muted)] hover:border-[var(--color-dash-border)]/80 hover:text-[var(--color-dash-text)]'
                                                     }`}
                                                 >
-                                                    <span className="text-base">{CURRENCY_ICONS[c]}</span>
-                                                    {c}
+                                                    <span className="text-base">{CURRENCY_ICONS[wallet.currency] ?? '¤'}</span>
+                                                    <span className="min-w-0 text-left">
+                                                        <span className="block truncate">{wallet.currency}</span>
+                                                        <span className="block truncate text-[10px] opacity-70">{wallet.network ?? wallet.name}</span>
+                                                    </span>
                                                 </button>
                                             ))}
                                         </div>
+                                        {errors.wallet_id && <p className="mt-1 text-xs text-red-400">{errors.wallet_id}</p>}
+                                        {!wallets.length && <p className="mt-2 text-xs text-amber-400">No deposit wallets are available. Please contact support.</p>}
                                     </div>
 
                                     <div>
@@ -146,10 +163,10 @@ export default function DepositPage() {
                                     <button
                                         type="button"
                                         onClick={() => {
-                                            if (!data.amount || parseFloat(data.amount) < 10) return;
+                                            if (!data.amount || parseFloat(data.amount) < 10 || !data.wallet_id) return;
                                             setStep(2);
                                         }}
-                                        disabled={!data.amount || parseFloat(data.amount) < 10}
+                                        disabled={!data.amount || parseFloat(data.amount) < 10 || !data.wallet_id}
                                         className="w-full py-2.5 rounded-lg bg-gold text-black text-sm font-semibold hover:bg-gold/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all"
                                     >
                                         Continue →
@@ -161,12 +178,17 @@ export default function DepositPage() {
                                 <div className="space-y-4">
                                     <div className="rounded-lg bg-[var(--color-dash-bg)] border border-[var(--color-dash-border)] p-4">
                                         <div className="flex items-center justify-between mb-2">
-                                            <span className="text-xs text-[var(--color-dash-muted)]">Send {data.currency} to this address</span>
-                                            <span className="text-xs text-[var(--color-dash-muted)]">{NETWORKS[data.currency]}</span>
+                                            <span className="text-xs text-[var(--color-dash-muted)]">Send {selectedWallet?.currency} to this address</span>
+                                            <span className="text-xs text-[var(--color-dash-muted)]">{selectedWallet?.network ?? selectedWallet?.name}</span>
                                         </div>
+                                        <img
+                                            src={`https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(selectedWallet?.address ?? '')}`}
+                                            alt="Deposit wallet QR code"
+                                            className="mx-auto mb-3 h-40 w-40 rounded-lg bg-white p-2"
+                                        />
                                         <div className="flex items-start gap-2">
                                             <p className="flex-1 text-xs font-mono text-[var(--color-dash-text)] break-all leading-relaxed">
-                                                {wallets[data.currency]}
+                                                {selectedWallet?.address}
                                             </p>
                                             <button
                                                 type="button"
@@ -180,12 +202,17 @@ export default function DepositPage() {
 
                                     <div className="flex items-start gap-2 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
                                         <AlertCircle size={14} className="mt-0.5 shrink-0" />
-                                        <span>Only send {data.currency} on the correct network. Sending other coins may result in permanent loss.</span>
+                                        <span>Only send {selectedWallet?.currency} on the selected network. Sending other coins may result in permanent loss.</span>
                                     </div>
 
                                     <div className="flex items-center justify-between text-sm">
                                         <span className="text-[var(--color-dash-muted)]">Amount to send</span>
                                         <span className="font-semibold text-gold">${parseFloat(data.amount).toLocaleString()}</span>
+                                    </div>
+
+                                    <div className="flex items-center justify-between text-sm rounded-lg bg-amber-500/10 border border-amber-500/20 px-3 py-2 text-amber-300">
+                                        <span>Deposit window</span>
+                                        <span className="font-semibold">{Math.floor(secondsLeft / 60)}:{String(secondsLeft % 60).padStart(2, '0')}</span>
                                     </div>
 
                                     <div className="flex gap-2">

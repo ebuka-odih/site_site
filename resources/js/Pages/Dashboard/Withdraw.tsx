@@ -1,34 +1,27 @@
 import { useForm, usePage } from '@inertiajs/react';
 import { AlertCircle, ArrowUpCircle } from 'lucide-react';
 import DashboardLayout, { StatusBadge, formatCurrency, formatDate } from '../../Components/DashboardLayout';
-import type { PageProps, PaginatedData, Withdrawal } from '../../types';
+import type { PageProps, PaginatedData, Wallet, Withdrawal } from '../../types';
 
 interface Props extends PageProps {
     withdrawals: PaginatedData<Withdrawal>;
+    wallets: Wallet[];
     balance: number;
 }
 
-const CURRENCIES = ['USDT', 'USDC', 'ETH', 'BTC'] as const;
-const NETWORKS: Record<string, string[]> = {
-    USDT: ['TRC-20', 'ERC-20', 'BEP-20'],
-    USDC: ['ERC-20', 'BEP-20'],
-    ETH: ['ERC-20 (Ethereum)'],
-    BTC: ['Bitcoin Mainnet'],
-};
-
 export default function WithdrawPage() {
-    const { withdrawals, balance } = usePage<Props>().props;
+    const { withdrawals, wallets, balance } = usePage<Props>().props;
+    const defaultWalletId = wallets[0]?.id ? String(wallets[0].id) : '';
 
     const { data, setData, post, processing, errors, reset } = useForm({
         amount: '',
-        currency: 'USDT',
+        wallet_id: defaultWalletId,
         wallet_address: '',
-        network: '',
     });
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        post('/user/wallet/withdrawals', { onSuccess: () => reset() });
+        post('/user/withdrawals', { onSuccess: () => reset() });
     }
 
     const insufficientBalance = data.amount && parseFloat(data.amount) > balance;
@@ -57,44 +50,24 @@ export default function WithdrawPage() {
                                 <span className="text-sm font-bold text-gold">{formatCurrency(balance)}</span>
                             </div>
 
-                            {/* Currency */}
+                            {/* Wallet */}
                             <div>
                                 <label className="block text-xs font-medium text-[var(--color-dash-text)] mb-2">
-                                    Currency
-                                </label>
-                                <div className="grid grid-cols-2 gap-2">
-                                    {CURRENCIES.map(c => (
-                                        <button
-                                            key={c}
-                                            type="button"
-                                            onClick={() => { setData('currency', c); setData('network', ''); }}
-                                            className={`px-3 py-2.5 rounded-lg border text-sm font-medium transition-all ${
-                                                data.currency === c
-                                                    ? 'border-gold/60 bg-gold/10 text-gold'
-                                                    : 'border-[var(--color-dash-border)] text-[var(--color-dash-muted)] hover:text-[var(--color-dash-text)]'
-                                            }`}
-                                        >
-                                            {c}
-                                        </button>
-                                    ))}
-                                </div>
-                            </div>
-
-                            {/* Network */}
-                            <div>
-                                <label className="block text-xs font-medium text-[var(--color-dash-text)] mb-1.5">
-                                    Network
+                                    Wallet
                                 </label>
                                 <select
-                                    value={data.network}
-                                    onChange={e => setData('network', e.target.value)}
-                                    className="w-full px-3 py-2.5 rounded-lg bg-[var(--color-dash-bg)] border border-[var(--color-dash-border)] text-sm text-[var(--color-dash-text)] focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold/50"
+                                    value={data.wallet_id}
+                                    onChange={e => setData('wallet_id', e.target.value)}
+                                    className={`w-full px-3 py-2.5 rounded-lg bg-[var(--color-dash-bg)] border text-sm text-[var(--color-dash-text)] focus:outline-none focus:ring-2 focus:ring-gold/40 focus:border-gold/50 ${
+                                        errors.wallet_id ? 'border-red-500/60' : 'border-[var(--color-dash-border)]'
+                                    }`}
                                 >
-                                    <option value="">Select network…</option>
-                                    {(NETWORKS[data.currency] ?? []).map(n => (
-                                        <option key={n} value={n}>{n}</option>
+                                    <option value="">Select wallet…</option>
+                                    {wallets.map(wallet => (
+                                        <option key={wallet.id} value={wallet.id}>{wallet.currency} · {wallet.network ?? wallet.name}</option>
                                     ))}
                                 </select>
+                                {errors.wallet_id && <p className="mt-1 text-xs text-red-400">{errors.wallet_id}</p>}
                             </div>
 
                             {/* Wallet address */}
@@ -155,7 +128,7 @@ export default function WithdrawPage() {
 
                             <button
                                 type="submit"
-                                disabled={processing || !!insufficientBalance || !data.wallet_address || !data.amount}
+                                disabled={processing || !!insufficientBalance || !data.wallet_address || !data.amount || !data.wallet_id}
                                 className="w-full py-2.5 rounded-lg bg-gold text-black text-sm font-semibold hover:bg-gold/90 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-2"
                             >
                                 <ArrowUpCircle size={15} />

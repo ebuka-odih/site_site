@@ -151,14 +151,14 @@ export default function DashboardIndex() {
                         )}
                         <div className="mt-4 grid grid-cols-3 gap-2">
                             <Link
-                                href="/user/wallet?tab=deposit"
+                                href="/user/deposits"
                                 className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-gold text-black text-xs font-semibold hover:bg-gold/90 transition-all"
                             >
                                 <ArrowDownCircle size={14} />
                                 Deposit
                             </Link>
                             <Link
-                                href="/user/wallet?tab=withdraw"
+                                href="/user/withdrawals"
                                 className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-white/10 text-white text-xs font-medium hover:bg-white/15 border border-white/10 transition-all"
                             >
                                 <ArrowUpCircle size={14} />
