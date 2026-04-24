@@ -1,5 +1,5 @@
 import { Link, usePage } from '@inertiajs/react';
-import { ArrowDownCircle, ArrowUpCircle, Plus } from 'lucide-react';
+import { ArrowDownCircle, ArrowUpCircle, Plus, WalletCards } from 'lucide-react';
 import { useState } from 'react';
 import DashboardLayout, { formatCurrency, formatDate, StatusBadge } from '../../Components/DashboardLayout';
 import type { Deposit, PageProps, PaginatedData, Withdrawal } from '../../types';
@@ -18,31 +18,56 @@ export default function WalletPage() {
     return (
         <DashboardLayout title="Wallet" breadcrumb={[{ label: 'Dashboard', href: '/user/dashboard' }, { label: 'Wallet' }]}>
             <div className="space-y-6">
-                <div className="flex flex-col gap-4 sm:flex-row sm:items-end sm:justify-between">
+                <div>
+                    <h1 className="text-xl font-semibold text-[var(--color-dash-text)]">Wallet</h1>
+                    <p className="mt-1 text-sm text-[var(--color-dash-muted)]">Review transaction history and start a new deposit or withdrawal.</p>
+                </div>
+
+                <div className="grid gap-4 lg:grid-cols-[minmax(220px,320px)_1fr]">
+                    <div className="relative overflow-hidden rounded-xl border border-gold/20 bg-gradient-to-br from-[#1a1c2e] to-[#101522] p-5">
+                        <div className="absolute -right-8 -top-8 h-24 w-24 rounded-full bg-gold/10 blur-2xl" />
+                        <div className="relative flex items-start justify-between gap-4">
+                            <div>
+                                <p className="text-xs uppercase tracking-wide text-[var(--color-dash-muted)]">Available Balance</p>
+                                <p className="mt-2 text-2xl font-bold text-white">{formatCurrency(balance)}</p>
+                            </div>
+                            <div className="flex h-10 w-10 items-center justify-center rounded-lg border border-gold/25 bg-gold/10 text-gold">
+                                <WalletCards size={18} />
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="grid gap-3 sm:grid-cols-2">
+                        <Link href="/user/deposits" className="group flex min-h-24 items-center justify-between gap-4 rounded-xl border border-gold/30 bg-gold px-5 py-4 text-black shadow-lg shadow-gold/10 transition hover:-translate-y-0.5 hover:bg-gold/90">
+                            <span>
+                                <span className="block text-sm font-bold">New Deposit</span>
+                                <span className="mt-1 block text-xs font-medium text-black/65">Fund your wallet</span>
+                            </span>
+                            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-black/10 transition group-hover:bg-black/15">
+                                <Plus size={18} />
+                            </span>
+                        </Link>
+                        <Link href="/user/withdrawals" className="group flex min-h-24 items-center justify-between gap-4 rounded-xl border border-gold/25 bg-[var(--color-dash-surface)] px-5 py-4 text-[var(--color-dash-text)] shadow-lg shadow-black/10 transition hover:-translate-y-0.5 hover:border-gold/50 hover:bg-[var(--color-dash-surface-2)]">
+                            <span>
+                                <span className="block text-sm font-bold">New Withdrawal</span>
+                                <span className="mt-1 block text-xs font-medium text-[var(--color-dash-muted)]">Request a payout</span>
+                            </span>
+                            <span className="flex h-10 w-10 items-center justify-center rounded-full bg-gold/10 text-gold transition group-hover:bg-gold/15">
+                                <ArrowUpCircle size={18} />
+                            </span>
+                        </Link>
+                    </div>
+                </div>
+
+                <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <h1 className="text-xl font-semibold text-[var(--color-dash-text)]">Wallet</h1>
-                        <p className="mt-1 text-sm text-[var(--color-dash-muted)]">Review transaction history and start a new deposit or withdrawal.</p>
+                        <h2 className="text-sm font-semibold text-[var(--color-dash-text)]">Transaction History</h2>
+                        <p className="mt-1 text-xs text-[var(--color-dash-muted)]">Switch between deposit and withdrawal records.</p>
                     </div>
-                    <div className="rounded-lg border border-[var(--color-dash-border)] bg-[var(--color-dash-surface)] px-4 py-2">
-                        <p className="text-xs text-[var(--color-dash-muted)]">Available Balance</p>
-                        <p className="text-lg font-semibold text-gold">{formatCurrency(balance)}</p>
+                    <div className="flex rounded-lg border border-[var(--color-dash-border)] bg-[var(--color-dash-surface)] p-1 sm:w-80">
+                        <TabButton active={activeTab === 'deposit'} onClick={() => setActiveTab('deposit')} icon={<ArrowDownCircle size={16} />} label="Deposits" />
+                        <TabButton active={activeTab === 'withdraw'} onClick={() => setActiveTab('withdraw')} icon={<ArrowUpCircle size={16} />} label="Withdrawals" />
                     </div>
-                </div>
-
-                <div className="grid gap-3 sm:grid-cols-2">
-                    <Link href="/user/deposits" className="flex items-center justify-center gap-2 rounded-lg bg-gold px-4 py-3 text-sm font-semibold text-black hover:bg-gold/90">
-                        <Plus size={16} />
-                        New Deposit
-                    </Link>
-                    <Link href="/user/withdrawals" className="flex items-center justify-center gap-2 rounded-lg border border-[var(--color-dash-border)] bg-[var(--color-dash-surface)] px-4 py-3 text-sm font-semibold text-[var(--color-dash-text)] hover:border-gold/40">
-                        <ArrowUpCircle size={16} />
-                        New Withdrawal
-                    </Link>
-                </div>
-
-                <div className="flex rounded-lg border border-[var(--color-dash-border)] bg-[var(--color-dash-surface)] p-1">
-                    <TabButton active={activeTab === 'deposit'} onClick={() => setActiveTab('deposit')} icon={<ArrowDownCircle size={16} />} label="Deposits" />
-                    <TabButton active={activeTab === 'withdraw'} onClick={() => setActiveTab('withdraw')} icon={<ArrowUpCircle size={16} />} label="Withdrawals" />
                 </div>
 
                 {activeTab === 'deposit' ? (
