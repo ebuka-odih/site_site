@@ -11,6 +11,7 @@ import {
     Shield,
     User,
     Users,
+    Wallet,
     X,
 } from 'lucide-react';
 import { useState } from 'react';
@@ -89,14 +90,14 @@ export default function DashboardLayout({ children, title, breadcrumb }: Props) 
 
     const userNav: NavItem[] = [
         { label: 'Dashboard',   href: '/user/dashboard',     icon: <LayoutDashboard size={18} />, exact: true },
-        { label: 'Deposits',    href: '/user/deposits',      icon: <ArrowDownCircle size={18} /> },
-        { label: 'Withdrawals', href: '/user/withdrawals',   icon: <ArrowUpCircle size={18} /> },
+        { label: 'Wallet',      href: '/user/wallet',        icon: <Wallet size={18} /> },
         { label: 'Profile',     href: '/user/profile',       icon: <User size={18} /> },
     ];
 
     const adminNav: NavItem[] = [
         { label: 'Dashboard',   href: '/admin/dashboard',    icon: <LayoutDashboard size={18} />, exact: true },
         { label: 'Users',       href: '/admin/users',        icon: <Users size={18} /> },
+        { label: 'Wallets',     href: '/admin/wallets',      icon: <Wallet size={18} /> },
         { label: 'Deposits',    href: '/admin/deposits',     icon: <ArrowDownCircle size={18} /> },
         { label: 'Withdrawals', href: '/admin/withdrawals',  icon: <ArrowUpCircle size={18} /> },
     ];

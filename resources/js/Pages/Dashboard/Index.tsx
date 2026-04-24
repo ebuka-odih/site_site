@@ -151,14 +151,14 @@ export default function DashboardIndex() {
                         )}
                         <div className="mt-4 grid grid-cols-3 gap-2">
                             <Link
-                                href="/user/deposits"
+                                href="/user/wallet?tab=deposit"
                                 className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-gold text-black text-xs font-semibold hover:bg-gold/90 transition-all"
                             >
                                 <ArrowDownCircle size={14} />
                                 Deposit
                             </Link>
                             <Link
-                                href="/user/withdrawals"
+                                href="/user/wallet?tab=withdraw"
                                 className="flex items-center justify-center gap-1.5 py-2 rounded-lg bg-white/10 text-white text-xs font-medium hover:bg-white/15 border border-white/10 transition-all"
                             >
                                 <ArrowUpCircle size={14} />
@@ -232,7 +232,7 @@ export default function DashboardIndex() {
             <div className="rounded-2xl bg-[var(--color-dash-surface)] border border-[var(--color-dash-border)]">
                 <div className="flex items-center justify-between px-5 py-4 border-b border-[var(--color-dash-border)]">
                     <h2 className="text-sm font-semibold text-[var(--color-dash-text)]">Recent Activity</h2>
-                    <Link href="/user/deposits" className="text-xs text-gold hover:text-gold/80 transition-colors">
+                    <Link href="/user/wallet" className="text-xs text-gold hover:text-gold/80 transition-colors">
                         View all
                     </Link>
                 </div>

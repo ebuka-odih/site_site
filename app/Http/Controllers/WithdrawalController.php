@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Withdrawal;
+use App\Models\Wallet;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
@@ -11,16 +12,7 @@ class WithdrawalController extends Controller
 {
     public function index()
     {
-        $user = Auth::user();
-
-        $withdrawals = Withdrawal::where('user_id', $user->id)
-            ->orderBy('created_at', 'desc')
-            ->paginate(10);
-
-        return Inertia::render('Dashboard/Withdraw', [
-            'withdrawals' => $withdrawals,
-            'balance'     => (float) $user->balance,
-        ]);
+        return redirect()->route('wallet.index');
     }
 
     public function store(Request $request)
@@ -29,10 +21,11 @@ class WithdrawalController extends Controller
 
         $validated = $request->validate([
             'amount'         => ['required', 'numeric', 'min:10', 'max:9999999'],
-            'currency'       => ['required', 'in:BTC,ETH,USDT,USDC'],
+            'wallet_id'      => ['required', 'exists:wallets,id'],
             'wallet_address' => ['required', 'string', 'max:255'],
-            'network'        => ['nullable', 'string', 'max:50'],
         ]);
+
+        $wallet = Wallet::where('is_active', true)->findOrFail($validated['wallet_id']);
 
         if ((float) $user->balance < (float) $validated['amount']) {
             return back()->withErrors(['amount' => 'Insufficient balance for this withdrawal.']);
@@ -46,13 +39,13 @@ class WithdrawalController extends Controller
         Withdrawal::create([
             'user_id'        => $user->id,
             'amount'         => $validated['amount'],
-            'currency'       => $validated['currency'],
+            'currency'       => $wallet->currency,
             'wallet_address' => $validated['wallet_address'],
-            'network'        => $validated['network'] ?? null,
+            'network'        => $wallet->network,
             'status'         => 'pending',
         ]);
 
-        return redirect()->route('withdrawals.index')
-            ->with('success', 'Withdrawal request submitted. Processing within 24–48 hours.');
+        return redirect()->route('wallet.index')
+            ->with('success', 'Withdrawal request submitted. Admin has been notified in transaction history.');
     }
 }

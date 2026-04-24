@@ -49,6 +49,17 @@ export interface Withdrawal {
   user?: AuthUser;
 }
 
+export interface Wallet {
+  id: number;
+  name: string;
+  currency: string;
+  network: string | null;
+  address: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface PaginatedData<T> {
   data: T[];
   current_page: number;

@@ -55,7 +55,7 @@ export default function DepositPage() {
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        post('/user/deposits', {
+        post('/user/wallet/deposits', {
             forceFormData: true,
             onSuccess: () => { reset(); setStep(1); setPreviewUrl(null); },
         });

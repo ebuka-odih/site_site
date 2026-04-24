@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\User;
+use App\Models\Wallet;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 
@@ -41,5 +42,17 @@ class AdminSeeder extends Seeder
                 'member_id'         => 'GCC-8CBFDC8A',
             ]
         );
+
+        foreach ([
+            ['name' => 'Bitcoin Mainnet', 'currency' => 'BTC', 'network' => 'Bitcoin Mainnet', 'address' => 'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh'],
+            ['name' => 'Ethereum ERC-20', 'currency' => 'ETH', 'network' => 'ERC-20', 'address' => '0x742d35Cc6634C0532925a3b844Bc454e4438f44e'],
+            ['name' => 'USDT Tron', 'currency' => 'USDT', 'network' => 'TRC-20', 'address' => 'TQn9Y2khEsLJW1ChVWFMSMeRDow5KcbLSE'],
+            ['name' => 'USDC Ethereum', 'currency' => 'USDC', 'network' => 'ERC-20', 'address' => '0x742d35Cc6634C0532925a3b844Bc454e4438f44e'],
+        ] as $wallet) {
+            Wallet::updateOrCreate(
+                ['currency' => $wallet['currency'], 'network' => $wallet['network']],
+                $wallet + ['is_active' => true]
+            );
+        }
     }
 }

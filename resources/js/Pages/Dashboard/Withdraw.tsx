@@ -28,7 +28,7 @@ export default function WithdrawPage() {
 
     function submit(e: React.FormEvent) {
         e.preventDefault();
-        post('/user/withdrawals', { onSuccess: () => reset() });
+        post('/user/wallet/withdrawals', { onSuccess: () => reset() });
     }
 
     const insufficientBalance = data.amount && parseFloat(data.amount) > balance;
